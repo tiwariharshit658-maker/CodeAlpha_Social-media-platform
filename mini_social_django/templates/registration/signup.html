@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Join Mini Social{% endblock %}
+{% block content %}
+<div class="auth-wrap"><section class="card auth-card"><p class="eyebrow">FIND YOUR PEOPLE</p><h1>Make yourself at home.</h1><p class="muted">Create an account to post, like, comment, and follow.</p>
+<form method="post" class="stack-form">{% csrf_token %}{{ form.as_p }}<button class="button primary full" type="submit">Create account ↗</button></form>
+<p class="muted">Already a member? <a href="{% url 'login' %}">Log in</a></p></section></div>
+{% endblock %}

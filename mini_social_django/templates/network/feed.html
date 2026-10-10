@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Feed · Mini Social{% endblock %}
+{% block content %}
+<section class="welcome">
+  <div><p class="eyebrow">YOUR COMMUNITY, IN ONE PLACE</p><h1>A little more social.</h1><p class="muted">Share a thought, find your people, keep the conversation going.</p></div>
+  <div class="welcome-orb">✳</div>
+</section>
+<div class="layout">
+  <section class="main-column">
+    {% if user.is_authenticated %}
+    <article class="composer card">
+      <div class="avatar">{{ user.username|first|upper }}</div>
+      <form method="post" action="{% url 'create_post' %}" class="composer-form">
+        {% csrf_token %}{{ form.content }}
+        <div class="composer-bottom"><span class="muted small">Keep it kind. Keep it you.</span><button class="button primary" type="submit">Publish post ↗</button></div>
+      </form>
+    </article>
+    {% else %}
+    <article class="card join-card"><div><h2>Your voice belongs here.</h2><p class="muted">Join the conversation by creating a free account.</p></div><a class="button primary" href="{% url 'signup' %}">Create account</a></article>
+    {% endif %}
+    <div class="section-heading"><h2>Community feed</h2><span class="pill">{{ posts|length }} posts</span></div>
+    {% for post in posts %}
+      {% include "network/post_card.html" with post=post %}
+    {% empty %}
+      <article class="card empty"><div class="empty-icon">✎</div><h3>The feed is all yours.</h3><p class="muted">Be the first to share something.</p></article>
+    {% endfor %}
+  </section>
+  <aside class="side-column">
+    <article class="card side-card"><p class="eyebrow">A GOOD REMINDER</p><h3>Small moments make great posts.</h3><p class="muted">A thought, a win, a question — start anywhere.</p></article>
+    {% if user.is_authenticated %}
+    <article class="card side-card"><p class="eyebrow">YOUR SPACE</p><div class="mini-user"><div class="avatar">{{ user.username|first|upper }}</div><div><strong>@{{ user.username }}</strong><p class="muted small">You're part of the community.</p></div></div><a class="text-link" href="{% url 'edit_profile' %}">Personalize your profile →</a></article>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

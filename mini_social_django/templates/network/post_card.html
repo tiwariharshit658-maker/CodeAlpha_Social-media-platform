@@ -1,0 +1,22 @@
+<article class="card post-card">
+  <div class="post-header">
+    <a class="avatar" href="{% url 'profile' post.author.username %}">{{ post.author.username|first|upper }}</a>
+    <div class="post-author"><a class="author-name" href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a><span class="muted small">{{ post.created_at|date:"M j, Y · g:i A" }}</span></div>
+    {% if user == post.author %}<form method="post" action="{% url 'delete_post' post.id %}" class="delete-form" data-confirm="Delete this post?">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="icon-button" title="Delete post" aria-label="Delete post">···</button></form>{% endif %}
+  </div>
+  <p class="post-content">{{ post.content|linebreaksbr }}</p>
+  <div class="post-actions">
+    {% if user.is_authenticated %}
+    <form method="post" action="{% url 'toggle_like' post.id %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><button class="action-button {% if post.id in liked_ids %}liked{% endif %}" type="submit">{% if post.id in liked_ids %}♥ Liked{% else %}♡ Like{% endif %} <span>{{ post.like_count }}</span></button></form>
+    {% else %}<span class="action-button">♡ {{ post.like_count }} likes</span>{% endif %}
+    <span class="action-button">☰ {{ post.comments.count }} comments</span>
+  </div>
+  <div class="comments">
+    {% for comment in post.comments.all %}
+    <div class="comment"><div class="tiny-avatar">{{ comment.author.username|first|upper }}</div><div class="comment-body"><p><a href="{% url 'profile' comment.author.username %}"><strong>{{ comment.author.username }}</strong></a> {{ comment.content }}</p><span class="muted tiny">{{ comment.created_at|date:"M j · g:i A" }}</span></div></div>
+    {% endfor %}
+    {% if user.is_authenticated %}
+    <form class="comment-form" method="post" action="{% url 'add_comment' post.id %}">{% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}"><input name="content" maxlength="500" placeholder="Add to the conversation..." required><button type="submit" aria-label="Post comment">↗</button></form>
+    {% else %}<p class="muted small login-prompt"><a href="{% url 'login' %}">Log in</a> to comment.</p>{% endif %}
+  </div>
+</article>
